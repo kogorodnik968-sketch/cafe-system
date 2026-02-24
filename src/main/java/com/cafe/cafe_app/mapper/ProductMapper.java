@@ -5,9 +5,9 @@ import com.cafe.cafe_app.model.Product;
 
 public class ProductMapper {
 
-    private ProductMapper(){ }
+    private ProductMapper() { }
 
-    public static ProductDto toDtoElement(Product product){
+    public static ProductDto toDtoElement(Product product) {
         return new ProductDto(
                 product.getIdPr(),
                 product.getNamePr(),

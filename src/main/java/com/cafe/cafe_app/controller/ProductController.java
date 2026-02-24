@@ -15,20 +15,20 @@ import java.util.List;
 @RequestMapping("/products")
 @RequiredArgsConstructor
 public class ProductController {
-   private final ProductService service;
+    private final ProductService service;
 
-   @GetMapping("/{id}")
+    @GetMapping("/{id}")
     public ProductDto getProductById(@PathVariable Long id)
-   {
-       return service.getById(id);
-   }
+    {
+        return service.getById(id);
+    }
 
-   @GetMapping
+    @GetMapping
     public List<ProductDto> getProductsByName(@RequestParam(required = false) String name) {
-       if (name != null){
-           return service.getByName(name);
-       }
-       return service.getAll();
-   }
+        if (name != null) {
+            return service.getByName(name);
+        }
+        return service.getAll();
+    }
 
 }

@@ -15,17 +15,17 @@ public class ProductService {
 
     private final ProductRepository repository;
 
-    public ProductDto getById(Long id){
-        Product product=repository.findById(id);
+    public ProductDto getById(Long id) {
+        Product product = repository.findById(id);
         return ProductMapper.toDtoElement(product);
     }
 
-    public List<ProductDto> getAll(){
+    public List<ProductDto> getAll() {
         return repository.findAll().stream().map(ProductMapper::toDtoElement).toList();
     }
 
-    public List<ProductDto> getByName(String name){
-       List<Product> product=repository.findByName(name);
-       return product.stream().map(ProductMapper::toDtoElement).toList();
+    public List<ProductDto> getByName(String name) {
+        List<Product> product = repository.findByName(name);
+        return product.stream().map(ProductMapper::toDtoElement).toList();
     }
 }
