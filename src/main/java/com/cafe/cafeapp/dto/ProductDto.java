@@ -1,4 +1,4 @@
-package com.cafe.cafe_app.dto;
+package com.cafe.cafeapp.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -1,6 +1,6 @@
-package com.cafe.cafe_app.repository;
+package com.cafe.cafeapp.repository;
 
-import com.cafe.cafe_app.model.Product;
+import com.cafe.cafeapp.model.Product;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;

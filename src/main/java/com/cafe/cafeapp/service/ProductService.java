@@ -1,9 +1,9 @@
-package com.cafe.cafe_app.service;
+package com.cafe.cafeapp.service;
 
-import com.cafe.cafe_app.dto.ProductDto;
-import com.cafe.cafe_app.mapper.ProductMapper;
-import com.cafe.cafe_app.model.Product;
-import com.cafe.cafe_app.repository.ProductRepository;
+import com.cafe.cafeapp.dto.ProductDto;
+import com.cafe.cafeapp.mapper.ProductMapper;
+import com.cafe.cafeapp.model.Product;
+import com.cafe.cafeapp.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

@@ -1,7 +1,7 @@
-package com.cafe.cafe_app.controller;
+package com.cafe.cafeapp.controller;
 
-import com.cafe.cafe_app.dto.ProductDto;
-import com.cafe.cafe_app.service.ProductService;
+import com.cafe.cafeapp.dto.ProductDto;
+import com.cafe.cafeapp.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,8 +18,7 @@ public class ProductController {
     private final ProductService service;
 
     @GetMapping("/{id}")
-    public ProductDto getProductById(@PathVariable Long id)
-    {
+    public ProductDto getProductById(@PathVariable Long id) {
         return service.getById(id);
     }
 

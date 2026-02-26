@@ -1,7 +1,7 @@
-package com.cafe.cafe_app.mapper;
+package com.cafe.cafeapp.mapper;
 
-import com.cafe.cafe_app.dto.ProductDto;
-import com.cafe.cafe_app.model.Product;
+import com.cafe.cafeapp.dto.ProductDto;
+import com.cafe.cafeapp.model.Product;
 
 public class ProductMapper {
 

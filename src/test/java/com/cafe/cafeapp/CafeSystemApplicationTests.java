@@ -1,4 +1,4 @@
-package com.cafe.cafe_app;
+package com.cafe.cafeapp;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
