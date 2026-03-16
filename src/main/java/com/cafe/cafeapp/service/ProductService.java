@@ -1,31 +1,103 @@
 package com.cafe.cafeapp.service;
 
-import com.cafe.cafeapp.dto.ProductDto;
+import com.cafe.cafeapp.dto.ProductResponseDto;
+import com.cafe.cafeapp.dto.ProductRequestDto;
 import com.cafe.cafeapp.mapper.ProductMapper;
+import com.cafe.cafeapp.model.Category;
+import com.cafe.cafeapp.model.Ingredient;
 import com.cafe.cafeapp.model.Product;
+import com.cafe.cafeapp.model.Tag;
+import com.cafe.cafeapp.repository.CategoryRepository;
+import com.cafe.cafeapp.repository.IngredientRepository;
 import com.cafe.cafeapp.repository.ProductRepository;
+import com.cafe.cafeapp.repository.TagRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
 public class ProductService {
 
-    private final ProductRepository repository;
+    private final ProductRepository productRepository;
+    private final CategoryRepository categoryRepository;
+    private final IngredientRepository ingredientRepository;
+    private final TagRepository tagRepository;
+    private final ProductMapper productMapper;
 
-    public ProductDto getById(Long id) {
-        Product product = repository.findById(id);
-        return ProductMapper.toDtoElement(product);
+    @Transactional(readOnly = true)
+    public List<ProductResponseDto> getAllProducts() {
+        return productMapper.toResponseDto(productRepository.findAll());
     }
 
-    public List<ProductDto> getAll() {
-        return repository.findAll().stream().map(ProductMapper::toDtoElement).toList();
+    @Transactional(readOnly = true)
+    public ProductResponseDto getById (Long id) {
+        Product product = productRepository.findById(id).orElseThrow(
+                () -> new RuntimeException("Product not found with id " + id));
+
+        return productMapper.toResponseDto(product);
     }
 
-    public List<ProductDto> getByName(String name) {
-        List<Product> product = repository.findByName(name);
-        return product.stream().map(ProductMapper::toDtoElement).toList();
+    @Transactional(readOnly = true)
+    public List<ProductResponseDto> getByName (String name) {
+        List<Product> products = productRepository.findByName(name);
+
+        return productMapper.toResponseDto(products);
+    }
+
+    @Transactional
+    public ProductResponseDto create (ProductRequestDto dto) {
+
+        if (productRepository.existsByName(dto.getName())) {
+            throw new RuntimeException("Product with this name already exists");
+        }
+
+        Product product = productMapper.toEntity(dto);
+
+        Category category = categoryRepository.findById(dto.getCategoryId()).orElseThrow();
+
+        Set<Ingredient> ingredients = new HashSet<>(ingredientRepository.findAllById(dto.getIngredientsId()));
+
+        Tag tag = tagRepository.findById(dto.getTagId()).orElseThrow();
+
+        product.setCategory(category);
+        product.setIngredients(ingredients);
+        product.setTag(tag);
+
+        Product saved = productRepository.save(product);
+        return productMapper.toResponseDto(saved);
+    }
+
+    @Transactional
+    public ProductResponseDto update (Long id, ProductRequestDto dto) {
+        Product existing = productRepository.findById(id).orElseThrow();
+
+        existing.setName(dto.getName());
+        existing.setPrice(dto.getPrice());
+
+        Category category = categoryRepository.findById(dto.getCategoryId()).orElseThrow();
+        Set<Ingredient> ingredients = new HashSet<>(ingredientRepository.findAllById(dto.getIngredientsId()));
+        Tag tag = tagRepository.findById(dto.getTagId()).orElseThrow(
+                () -> new RuntimeException("Tag not found"));
+
+        existing.setCategory(category);
+        existing.setIngredients(ingredients);
+        existing.setTag(tag);
+
+        return productMapper.toResponseDto(productRepository.save(existing));
+    }
+
+    @Transactional
+    public void delete (Long id) {
+
+        if (!productRepository.existsById(id)) {
+            throw new RuntimeException("Product not found with id " + id);
+        }
+
+        productRepository.deleteById(id);
     }
 }

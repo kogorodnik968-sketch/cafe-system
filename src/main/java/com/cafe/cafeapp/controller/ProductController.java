@@ -1,13 +1,13 @@
 package com.cafe.cafeapp.controller;
 
-import com.cafe.cafeapp.dto.ProductDto;
+import com.cafe.cafeapp.dto.ProductRequestDto;
+import com.cafe.cafeapp.dto.ProductResponseDto;
+//import com.cafe.cafeapp.dto.ProductRequestDto;
 import com.cafe.cafeapp.service.ProductService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -15,19 +15,42 @@ import java.util.List;
 @RequestMapping("/products")
 @RequiredArgsConstructor
 public class ProductController {
-    private final ProductService service;
+    private final ProductService productService;
 
     @GetMapping("/{id}")
-    public ProductDto getProductById(@PathVariable Long id) {
-        return service.getById(id);
+    public ResponseEntity<ProductResponseDto> getProductById(@PathVariable Long id)
+    {
+        return ResponseEntity.ok(productService.getById(id)) ;
     }
 
     @GetMapping
-    public List<ProductDto> getProductsByName(@RequestParam(required = false) String name) {
+    public List<ProductResponseDto>  getProductsByName (@RequestParam(required = false) String name) {
         if (name != null) {
-            return service.getByName(name);
+            return productService.getByName(name);
         }
-        return service.getAll();
+
+        return productService.getAllProducts();
     }
 
+    @PostMapping
+    public ResponseEntity<ProductResponseDto> createProduct (@RequestBody ProductRequestDto dto) {
+        ProductResponseDto response = productService.create(dto);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ProductResponseDto> updateProduct (@PathVariable Long id, @RequestBody ProductRequestDto dto)
+    {
+        ProductResponseDto response = productService.update(id, dto);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteProduct (@PathVariable Long id) {
+        productService.delete(id);
+
+        return ResponseEntity.noContent().build();
+    }
 }

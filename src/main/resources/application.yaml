@@ -1,3 +1,21 @@
 spring:
   application:
-    name: cafe system
+    name: cafe-system
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/CafeDB
+    username: postgres
+    password: R5q8l9p0
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        hibernate.use_sql_comments: true
+
+  logging.level:
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
