@@ -2,6 +2,7 @@ package com.cafe.cafeapp.service;
 
 import com.cafe.cafeapp.dto.ProductResponseDto;
 import com.cafe.cafeapp.dto.ProductRequestDto;
+import com.cafe.cafeapp.exception.NotFoundException;
 import com.cafe.cafeapp.mapper.ProductMapper;
 import com.cafe.cafeapp.model.Category;
 import com.cafe.cafeapp.model.Ingredient;
@@ -37,7 +38,7 @@ public class ProductService {
     @Transactional(readOnly = true)
     public ProductResponseDto getById (Long id) {
         Product product = productRepository.findById(id).orElseThrow(
-                () -> new RuntimeException("Product not found with id " + id));
+                () -> new NotFoundException(id));
 
         return productMapper.toResponseDto(product);
     }
@@ -82,7 +83,7 @@ public class ProductService {
         Category category = categoryRepository.findById(dto.getCategoryId()).orElseThrow();
         Set<Ingredient> ingredients = new HashSet<>(ingredientRepository.findAllById(dto.getIngredientsId()));
         Tag tag = tagRepository.findById(dto.getTagId()).orElseThrow(
-                () -> new RuntimeException("Tag not found"));
+                () -> new NotFoundException("Tag not found"));
 
         existing.setCategory(category);
         existing.setIngredients(ingredients);
@@ -95,7 +96,7 @@ public class ProductService {
     public void delete (Long id) {
 
         if (!productRepository.existsById(id)) {
-            throw new RuntimeException("Product not found with id " + id);
+            throw new NotFoundException("Product not found with id " + id);
         }
 
         productRepository.deleteById(id);

@@ -2,6 +2,7 @@ package com.cafe.cafeapp.service;
 
 import com.cafe.cafeapp.dto.EmployeeRequestDto;
 import com.cafe.cafeapp.dto.EmployeeResponseDto;
+import com.cafe.cafeapp.exception.NotFoundException;
 import com.cafe.cafeapp.mapper.EmployeeMapper;
 import com.cafe.cafeapp.model.Employee;
 import com.cafe.cafeapp.repository.EmployeeRepository;
@@ -26,7 +27,7 @@ public class EmployeeService {
     @Transactional(readOnly = true)
     public EmployeeResponseDto getById(Long id) {
         Employee employee = employeeRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Employee not found"));
+                .orElseThrow(() -> new NotFoundException(id));
 
         return employeeMapper.toResponseDto(employee);
     }
@@ -47,7 +48,7 @@ public class EmployeeService {
     public EmployeeResponseDto update(Long id, EmployeeRequestDto dto) {
 
         Employee existing = employeeRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Employee not found"));
+                .orElseThrow(() -> new NotFoundException("Employee not found"));
 
         existing.setFullName(dto.getFullName());
         existing.setRole(dto.getRole());
@@ -58,7 +59,7 @@ public class EmployeeService {
     @Transactional
     public void delete(Long id) {
         if (!employeeRepository.existsById(id)) {
-            throw new RuntimeException("Employee not found");
+            throw new NotFoundException(id);
         }
 
         employeeRepository.deleteById(id);

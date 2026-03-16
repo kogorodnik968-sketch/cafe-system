@@ -1,6 +1,7 @@
 package com.cafe.cafeapp.service;
 
 import com.cafe.cafeapp.dto.IngredientDto;
+import com.cafe.cafeapp.exception.NotFoundException;
 import com.cafe.cafeapp.mapper.IngredientMapper;
 import com.cafe.cafeapp.model.Ingredient;
 import com.cafe.cafeapp.repository.IngredientRepository;
@@ -25,7 +26,7 @@ public class IngredientService {
     @Transactional(readOnly = true)
     public IngredientDto getById(Long id) {
         Ingredient ingredient = ingredientRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Ingredient not found"));
+                .orElseThrow(() -> new NotFoundException(id));
 
         return ingredientMapper.toDto(ingredient);
     }
@@ -45,7 +46,7 @@ public class IngredientService {
     @Transactional
     public IngredientDto update(Long id, IngredientDto dto) {
         Ingredient existing = ingredientRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Ingredient not found"));
+                .orElseThrow(() -> new NotFoundException("Ingredient not found"));
 
         existing.setName(dto.getName());
 
@@ -55,7 +56,7 @@ public class IngredientService {
     @Transactional
     public void delete(Long id) {
         if (!ingredientRepository.existsById(id)) {
-            throw new RuntimeException("Ingredient not found");
+            throw new NotFoundException(id);
         }
 
         ingredientRepository.deleteById(id);

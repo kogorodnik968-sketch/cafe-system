@@ -3,6 +3,7 @@ package com.cafe.cafeapp.service;
 import com.cafe.cafeapp.dto.OrderRequestDto;
 import com.cafe.cafeapp.dto.OrderResponseDto;
 import com.cafe.cafeapp.enums.OrderStatus;
+import com.cafe.cafeapp.exception.NotFoundException;
 import com.cafe.cafeapp.mapper.OrderItemMapper;
 import com.cafe.cafeapp.mapper.OrderMapper;
 import com.cafe.cafeapp.model.Customer;
@@ -32,7 +33,7 @@ public class OrderService {
     @Transactional(readOnly = true)
     public OrderResponseDto getById(Long id) {
         Order order = orderRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Order not found"));
+                .orElseThrow(() -> new NotFoundException(id));
 
         return orderMapper.toResponseDto(order);
     }
@@ -54,7 +55,7 @@ public class OrderService {
 
 
         Customer customer = customerRepository.findById(dto.getCustomerId())
-                .orElseThrow(() -> new RuntimeException("Customer not found"));
+                .orElseThrow(() -> new NotFoundException("Customer not found"));
 
         order.setCustomer(customer);
 
@@ -64,7 +65,7 @@ public class OrderService {
 
             Product product = productRepository.findById(
                     item.getProduct().getId()
-            ).orElseThrow(() -> new RuntimeException("Product not found"));
+            ).orElseThrow(() -> new NotFoundException("Product not found"));
 
             item.setProduct(product);
             item.setOrder(order);
@@ -86,7 +87,7 @@ public class OrderService {
     @Transactional
     public void delete(Long id) {
         if (!orderRepository.existsById(id)) {
-            throw new RuntimeException("Order not found");
+            throw new NotFoundException(id);
         }
         orderRepository.deleteById(id);
     }

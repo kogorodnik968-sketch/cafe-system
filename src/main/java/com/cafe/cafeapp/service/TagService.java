@@ -2,6 +2,7 @@ package com.cafe.cafeapp.service;
 
 
 import com.cafe.cafeapp.dto.TagDto;
+import com.cafe.cafeapp.exception.NotFoundException;
 import com.cafe.cafeapp.mapper.TagMapper;
 import com.cafe.cafeapp.model.Tag;
 import com.cafe.cafeapp.repository.TagRepository;
@@ -25,7 +26,7 @@ public class TagService {
     @Transactional(readOnly = true)
     public TagDto getById (Long id) {
         Tag tag = tagRepository.findById(id).orElseThrow(
-                () -> new RuntimeException("Tag not found with id " + id));
+                () -> new NotFoundException(id));
 
         return tagMapper.toDto(tag);
     }
@@ -61,7 +62,7 @@ public class TagService {
     @Transactional
     public void delete (Long id) {
         if (! tagRepository.existsById(id)) {
-            throw new RuntimeException("Tag not found with id " + id);
+            throw new NotFoundException(id);
         }
 
         tagRepository.deleteById(id);
