@@ -2,7 +2,6 @@ package com.cafe.cafeapp.controller;
 
 import com.cafe.cafeapp.dto.ProductRequestDto;
 import com.cafe.cafeapp.dto.ProductResponseDto;
-//import com.cafe.cafeapp.dto.ProductRequestDto;
 import com.cafe.cafeapp.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

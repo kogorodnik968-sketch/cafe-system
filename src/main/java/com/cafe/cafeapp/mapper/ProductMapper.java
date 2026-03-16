@@ -4,7 +4,6 @@ import com.cafe.cafeapp.dto.ProductRequestDto;
 import com.cafe.cafeapp.dto.ProductResponseDto;
 import com.cafe.cafeapp.model.Ingredient;
 import com.cafe.cafeapp.model.Product;
-//import com.cafe.cafeapp.model.Tag;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
