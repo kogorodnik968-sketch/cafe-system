@@ -2,6 +2,7 @@ package com.cafe.cafeapp.service;
 
 
 import com.cafe.cafeapp.dto.TagDto;
+import com.cafe.cafeapp.exception.AlreadyExistsException;
 import com.cafe.cafeapp.exception.NotFoundException;
 import com.cafe.cafeapp.mapper.TagMapper;
 import com.cafe.cafeapp.model.Tag;
@@ -41,7 +42,7 @@ public class TagService {
     @Transactional
     public TagDto create (TagDto dto) {
         if (tagRepository.existsByName(dto.getName())) {
-            throw new RuntimeException("Tag with this name already exists");
+            throw new AlreadyExistsException("Tag with this name already exists");
         }
 
         Tag tag = tagMapper.toEntity(dto);

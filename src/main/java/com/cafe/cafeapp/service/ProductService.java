@@ -2,6 +2,7 @@ package com.cafe.cafeapp.service;
 
 import com.cafe.cafeapp.dto.ProductResponseDto;
 import com.cafe.cafeapp.dto.ProductRequestDto;
+import com.cafe.cafeapp.exception.AlreadyExistsException;
 import com.cafe.cafeapp.exception.NotFoundException;
 import com.cafe.cafeapp.mapper.ProductMapper;
 import com.cafe.cafeapp.model.Category;
@@ -54,7 +55,7 @@ public class ProductService {
     public ProductResponseDto create (ProductRequestDto dto) {
 
         if (productRepository.existsByName(dto.getName())) {
-            throw new RuntimeException("Product with this name already exists");
+            throw new AlreadyExistsException("Product with this name already exists");
         }
 
         Product product = productMapper.toEntity(dto);

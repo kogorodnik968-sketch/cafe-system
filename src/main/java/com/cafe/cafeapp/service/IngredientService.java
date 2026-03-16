@@ -1,6 +1,7 @@
 package com.cafe.cafeapp.service;
 
 import com.cafe.cafeapp.dto.IngredientDto;
+import com.cafe.cafeapp.exception.AlreadyExistsException;
 import com.cafe.cafeapp.exception.NotFoundException;
 import com.cafe.cafeapp.mapper.IngredientMapper;
 import com.cafe.cafeapp.model.Ingredient;
@@ -34,7 +35,7 @@ public class IngredientService {
     @Transactional
     public IngredientDto create(IngredientDto dto) {
         if (ingredientRepository.existsByName(dto.getName())) {
-            throw new RuntimeException("Ingredient with this name already exists");
+            throw new AlreadyExistsException("Ingredient with this name already exists");
         }
         Ingredient ingredient = ingredientMapper.toEntity(dto);
 

@@ -2,6 +2,7 @@ package com.cafe.cafeapp.service;
 
 import com.cafe.cafeapp.dto.EmployeeRequestDto;
 import com.cafe.cafeapp.dto.EmployeeResponseDto;
+import com.cafe.cafeapp.exception.AlreadyExistsException;
 import com.cafe.cafeapp.exception.NotFoundException;
 import com.cafe.cafeapp.mapper.EmployeeMapper;
 import com.cafe.cafeapp.model.Employee;
@@ -35,7 +36,7 @@ public class EmployeeService {
     @Transactional
     public EmployeeResponseDto create(EmployeeRequestDto dto) {
         if (employeeRepository.existsByFullName(dto.getFullName())) {
-            throw new RuntimeException("Employee with this name already exists");
+            throw new AlreadyExistsException("Employee with this name already exists");
         }
         Employee employee = employeeMapper.toEntity(dto);
 
