@@ -33,7 +33,7 @@ public class OrderService {
         List<Employee> employees = employeeRepository.findAll();
 
         if (employees.isEmpty()) {
-            throw new NotFoundException("В базе данных нет сотрудников");
+            throw new NotFoundException("There are no employees in the database");
         }
 
         int randomIndex = random.nextInt(employees.size());
@@ -61,7 +61,7 @@ public class OrderService {
     public OrderResponseDto create(OrderRequestDto dto) {
 
         Customer customer = customerRepository.findById(dto.getCustomerId())
-                .orElseThrow(() -> new NotFoundException("Клиент не найден"));
+                .orElseThrow(() -> new NotFoundException("Customer not found"));
 
         Employee randomEmployee = getRandomEmployee();
 
@@ -80,7 +80,7 @@ public class OrderService {
         for (OrderItemRequestDto itemDto : dto.getItems()) {
 
             Product product = productRepository.findById(itemDto.getProductId())
-                    .orElseThrow(() -> new NotFoundException("Товар не найден"));
+                    .orElseThrow(() -> new NotFoundException("Product not found"));
 
             OrderItem item = new OrderItem();
             item.setOrder(savedOrder);
@@ -116,7 +116,7 @@ public class OrderService {
         order.setStatus(OrderStatus.ACCEPTED);
 
         Customer customer = customerRepository.findById(dto.getCustomerId())
-                .orElseThrow(() -> new NotFoundException("Клиент не найден"));
+                .orElseThrow(() -> new NotFoundException("Customer not found"));
 
         order.setCustomer(customer);
 
@@ -128,7 +128,7 @@ public class OrderService {
             OrderItemRequestDto itemDto = dto.getItems().get(i);
 
             Product product = productRepository.findById(itemDto.getProductId())
-                    .orElseThrow(() -> new NotFoundException("Товар не найден"));
+                    .orElseThrow(() -> new NotFoundException("Product not found"));
 
             OrderItem item = new OrderItem();
             item.setOrder(savedOrder);
@@ -163,7 +163,7 @@ public class OrderService {
         order.setOrderItems(new ArrayList<>());
 
         Customer customer = customerRepository.findById(dto.getCustomerId())
-                .orElseThrow(() -> new NotFoundException("Клиент не найден"));
+                .orElseThrow(() -> new NotFoundException("Customer not found"));
 
         order.setCustomer(customer);
 
@@ -176,7 +176,7 @@ public class OrderService {
             OrderItemRequestDto itemDto = dto.getItems().get(i);
 
             Product product = productRepository.findById(itemDto.getProductId())
-                    .orElseThrow(() -> new NotFoundException("Товар не найден"));
+                    .orElseThrow(() -> new NotFoundException("product not found"));
 
             OrderItem item = new OrderItem();
             item.setOrder(savedOrder);
