@@ -1,11 +1,6 @@
 package com.cafe.cafeapp.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.FetchType;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -25,6 +20,7 @@ public class Customer {
     private String lastName;
     private String middleName;
     private String phoneNumber;
-    @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Order> orders;
 }
