@@ -42,7 +42,7 @@ public class TagService {
     @Transactional
     public TagDto create (TagDto dto) {
         if (tagRepository.existsByName(dto.getName())) {
-            throw new AlreadyExistsException("Tag with this name already exists");
+            throw new AlreadyExistsException("Тег стаким названием уже существует");
         }
 
         Tag tag = tagMapper.toEntity(dto);

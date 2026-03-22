@@ -3,6 +3,7 @@ package com.cafe.cafeapp.controller;
 import com.cafe.cafeapp.dto.CustomerRequestDto;
 import com.cafe.cafeapp.dto.CustomerResponseDto;
 import com.cafe.cafeapp.service.CustomerService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +30,7 @@ public class CustomerController {
 
     @PostMapping
     public ResponseEntity<CustomerResponseDto> create(
-            @RequestBody CustomerRequestDto dto) {
+            @Valid @RequestBody CustomerRequestDto dto) {
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(customerService.create(dto));

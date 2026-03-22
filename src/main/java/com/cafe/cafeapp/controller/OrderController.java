@@ -45,4 +45,20 @@ public class OrderController {
         orderService.delete(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("/test/no-transaction")
+    public ResponseEntity<Void> testWithoutTransaction(
+            @RequestBody OrderRequestDto dto) {
+
+        orderService.createWithoutTransaction(dto);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/test/with-transaction")
+    public ResponseEntity<Void> testWithTransaction(
+            @RequestBody OrderRequestDto dto) {
+
+        orderService.createWithTransaction(dto);
+        return ResponseEntity.ok().build();
+    }
 }

@@ -35,7 +35,7 @@ public class IngredientService {
     @Transactional
     public IngredientDto create(IngredientDto dto) {
         if (ingredientRepository.existsByName(dto.getName())) {
-            throw new AlreadyExistsException("Ingredient with this name already exists");
+            throw new AlreadyExistsException("Ингридиент с таким названием уже существует");
         }
         Ingredient ingredient = ingredientMapper.toEntity(dto);
 

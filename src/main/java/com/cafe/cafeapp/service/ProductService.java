@@ -55,7 +55,7 @@ public class ProductService {
     public ProductResponseDto create (ProductRequestDto dto) {
 
         if (productRepository.existsByName(dto.getName())) {
-            throw new AlreadyExistsException("Product with this name already exists");
+            throw new AlreadyExistsException("Товарн с таким названием уже существует");
         }
 
         Product product = productMapper.toEntity(dto);
@@ -84,7 +84,7 @@ public class ProductService {
         Category category = categoryRepository.findById(dto.getCategoryId()).orElseThrow();
         Set<Ingredient> ingredients = new HashSet<>(ingredientRepository.findAllById(dto.getIngredientsId()));
         Tag tag = tagRepository.findById(dto.getTagId()).orElseThrow(
-                () -> new NotFoundException("Tag not found"));
+                () -> new NotFoundException("Тег не найден"));
 
         existing.setCategory(category);
         existing.setIngredients(ingredients);
@@ -97,7 +97,7 @@ public class ProductService {
     public void delete (Long id) {
 
         if (!productRepository.existsById(id)) {
-            throw new NotFoundException("Product not found with id " + id);
+            throw new NotFoundException("Продукт не найден с id" + id);
         }
 
         productRepository.deleteById(id);

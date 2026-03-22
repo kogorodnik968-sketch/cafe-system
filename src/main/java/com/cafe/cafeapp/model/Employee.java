@@ -23,7 +23,9 @@ public class Employee {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String fullName;
+    private String firstName;
+    private String lastName;
+    private String middleName;
     @Enumerated(EnumType.STRING)
     private EmployeeRole role;
     @OneToMany(mappedBy = "employee", fetch = FetchType.LAZY)

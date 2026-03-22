@@ -1,24 +1,21 @@
 package com.cafe.cafeapp.service;
 
+import com.cafe.cafeapp.dto.OrderItemRequestDto;
 import com.cafe.cafeapp.dto.OrderRequestDto;
 import com.cafe.cafeapp.dto.OrderResponseDto;
 import com.cafe.cafeapp.enums.OrderStatus;
 import com.cafe.cafeapp.exception.NotFoundException;
-import com.cafe.cafeapp.mapper.OrderItemMapper;
 import com.cafe.cafeapp.mapper.OrderMapper;
-import com.cafe.cafeapp.model.Customer;
-import com.cafe.cafeapp.model.Order;
-import com.cafe.cafeapp.model.OrderItem;
-import com.cafe.cafeapp.model.Product;
-import com.cafe.cafeapp.repository.CustomerRepository;
-import com.cafe.cafeapp.repository.OrderRepository;
-import com.cafe.cafeapp.repository.ProductRepository;
+import com.cafe.cafeapp.model.*;
+import com.cafe.cafeapp.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
@@ -28,7 +25,21 @@ public class OrderService {
     private final CustomerRepository customerRepository;
     private final ProductRepository productRepository;
     private final OrderMapper orderMapper;
-    private final OrderItemMapper orderItemMapper;
+    private final OrderItemRepository orderItemRepository;
+    private final EmployeeRepository employeeRepository;
+    private final Random random = new Random();
+
+    private Employee getRandomEmployee () {
+        List<Employee> employees = employeeRepository.findAll();
+
+        if (employees.isEmpty()) {
+            throw new NotFoundException("В базе данных нет сотрудников");
+        }
+
+        int randomIndex = random.nextInt(employees.size());
+
+        return employees.get(randomIndex);
+    }
 
     @Transactional(readOnly = true)
     public OrderResponseDto getById(Long id) {
@@ -49,39 +60,46 @@ public class OrderService {
     @Transactional
     public OrderResponseDto create(OrderRequestDto dto) {
 
-        Order order = orderMapper.toEntity(dto);
-
-        order.setStatus(OrderStatus.CREATED);
-
-
         Customer customer = customerRepository.findById(dto.getCustomerId())
-                .orElseThrow(() -> new NotFoundException("Customer not found"));
+                .orElseThrow(() -> new NotFoundException("Клиент не найден"));
 
+        Employee randomEmployee = getRandomEmployee();
+
+        Order order = new Order();
+        order.setStatus(OrderStatus.ACCEPTED);
         order.setCustomer(customer);
+        order.setEmployee(randomEmployee);
+        order.setTotalPrice(BigDecimal.ZERO);
+        order.setOrderItems(new ArrayList<>());
+
+        Order savedOrder = orderRepository.save(order);
 
         BigDecimal total = BigDecimal.ZERO;
 
-        for (OrderItem item : order.getOrderItems()) {
 
-            Product product = productRepository.findById(
-                    item.getProduct().getId()
-            ).orElseThrow(() -> new NotFoundException("Product not found"));
+        for (OrderItemRequestDto itemDto : dto.getItems()) {
 
+            Product product = productRepository.findById(itemDto.getProductId())
+                    .orElseThrow(() -> new NotFoundException("Товар не найден"));
+
+            OrderItem item = new OrderItem();
+            item.setOrder(savedOrder);
             item.setProduct(product);
-            item.setOrder(order);
-
-            BigDecimal itemTotal =
-                    product.getPrice().multiply(BigDecimal.valueOf(item.getQuantity()));
-
+            item.setQuantity(itemDto.getQuantity());
             item.setPriceAtPurchase(product.getPrice());
-            total = total.add(itemTotal);
+
+            savedOrder.getOrderItems().add(item);
+
+            total = total.add(
+                    product.getPrice().multiply(BigDecimal.valueOf(itemDto.getQuantity()))
+            );
         }
 
-        order.setTotalPrice(total);
+        savedOrder.setTotalPrice(total);
 
-        Order saved = orderRepository.save(order);
+        Order finalOrder = orderRepository.save(savedOrder);
 
-        return orderMapper.toResponseDto(saved);
+        return orderMapper.toResponseDto(finalOrder);
     }
 
     @Transactional
@@ -90,6 +108,98 @@ public class OrderService {
             throw new NotFoundException(id);
         }
         orderRepository.deleteById(id);
+    }
+
+    public void createWithoutTransaction(OrderRequestDto dto) {
+
+        Order order = new Order();
+        order.setStatus(OrderStatus.ACCEPTED);
+
+        Customer customer = customerRepository.findById(dto.getCustomerId())
+                .orElseThrow(() -> new NotFoundException("Клиент не найден"));
+
+        order.setCustomer(customer);
+
+        Order savedOrder = orderRepository.save(order);
+        BigDecimal total = BigDecimal.ZERO;
+
+        for (int i = 0; i < dto.getItems().size(); i++) {
+
+            OrderItemRequestDto itemDto = dto.getItems().get(i);
+
+            Product product = productRepository.findById(itemDto.getProductId())
+                    .orElseThrow(() -> new NotFoundException("Товар не найден"));
+
+            OrderItem item = new OrderItem();
+            item.setOrder(savedOrder);
+            item.setProduct(product);
+            item.setQuantity(itemDto.getQuantity());
+            item.setPriceAtPurchase(product.getPrice());
+
+            savedOrder.getOrderItems().add(item);
+
+            BigDecimal itemTotal =
+                    product.getPrice().multiply(BigDecimal.valueOf(itemDto.getQuantity()));
+
+            total = total.add(itemTotal);
+
+            orderItemRepository.save(item);
+
+
+            if (i == 1) {
+                throw new IllegalStateException("Intentional error");
+            }
+        }
+        savedOrder.setTotalPrice(total);
+        orderRepository.save(savedOrder);
+    }
+
+    @Transactional
+    public void createWithTransaction(OrderRequestDto dto) {
+
+        Order order = new Order();
+        order.setStatus(OrderStatus.ACCEPTED);
+        order.setTotalPrice(BigDecimal.ZERO);
+        order.setOrderItems(new ArrayList<>());
+
+        Customer customer = customerRepository.findById(dto.getCustomerId())
+                .orElseThrow(() -> new NotFoundException("Клиент не найден"));
+
+        order.setCustomer(customer);
+
+        Order savedOrder = orderRepository.save(order);
+
+        BigDecimal total = BigDecimal.ZERO;
+
+        for (int i = 0; i < dto.getItems().size(); i++) {
+
+            OrderItemRequestDto itemDto = dto.getItems().get(i);
+
+            Product product = productRepository.findById(itemDto.getProductId())
+                    .orElseThrow(() -> new NotFoundException("Товар не найден"));
+
+            OrderItem item = new OrderItem();
+            item.setOrder(savedOrder);
+            item.setProduct(product);
+            item.setQuantity(itemDto.getQuantity());
+            item.setPriceAtPurchase(product.getPrice());
+
+            savedOrder.getOrderItems().add(item);
+
+            BigDecimal itemTotal =
+                    product.getPrice().multiply(BigDecimal.valueOf(itemDto.getQuantity()));
+
+            total = total.add(itemTotal);
+
+            orderItemRepository.save(item);
+
+            if (i == 1) {
+                throw new IllegalStateException("Intentional error");
+            }
+        }
+
+        savedOrder.setTotalPrice(total);
+        orderRepository.save(savedOrder);
     }
 }
 

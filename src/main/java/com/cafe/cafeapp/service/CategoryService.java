@@ -42,7 +42,7 @@ public class CategoryService {
     @Transactional
     public CategoryDto create (CategoryDto dto) {
         if (categoryRepository.existsByName(dto.getName())) {
-            throw new CategoryNotFoundException("Category with this name already exists");
+            throw new CategoryNotFoundException("Категория с таким именем уже существует");
         }
 
         Category category = categoryMapper.toEntity(dto);
@@ -70,7 +70,7 @@ public class CategoryService {
         List < Product > products = category.getProducts();
 
         if (!products.isEmpty()) {
-            throw new CategoryNotFoundException("Cannot delete category with existing products");
+            throw new CategoryNotFoundException("Невозможно удалить категорию с существующими товарами");
         }
 
         categoryRepository.deleteById(id);

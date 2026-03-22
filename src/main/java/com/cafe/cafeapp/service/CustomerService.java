@@ -38,7 +38,9 @@ public class CustomerService {
 
     @Transactional
     public CustomerResponseDto create(CustomerRequestDto dto) {
-        if (customerRepository.existsByFullName(dto.getFullName())) {
+        if (customerRepository.existsByFirstName(dto.getFirstName()) &&
+            customerRepository.existsByLastName(dto.getLastName()) &&
+            customerRepository.existsByMiddleName(dto.getMiddleName())) {
             throw new AlreadyExistsException("Customer with this name already exists");
         }
         Customer customer = customerMapper.toEntity(dto);
@@ -54,7 +56,9 @@ public class CustomerService {
         Customer existing = customerRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(id));
 
-        existing.setFullName(dto.getFullName());
+        existing.setFirstName(dto.getFirstName());
+        existing.setLastName(dto.getLastName());
+        existing.setMiddleName(dto.getMiddleName());
         existing.setPhoneNumber(dto.getPhoneNumber());
 
         return customerMapper.toResponseDto(existing);

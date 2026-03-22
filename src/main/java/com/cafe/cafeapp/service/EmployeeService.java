@@ -35,7 +35,9 @@ public class EmployeeService {
 
     @Transactional
     public EmployeeResponseDto create(EmployeeRequestDto dto) {
-        if (employeeRepository.existsByFullName(dto.getFullName())) {
+        if (employeeRepository.existsByFirstName(dto.getFirstName()) &&
+            employeeRepository.existsByLastName(dto.getLastName()) &&
+            employeeRepository.existsByMiddleName(dto.getMiddleName())) {
             throw new AlreadyExistsException("Employee with this name already exists");
         }
         Employee employee = employeeMapper.toEntity(dto);
@@ -51,7 +53,9 @@ public class EmployeeService {
         Employee existing = employeeRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Employee not found"));
 
-        existing.setFullName(dto.getFullName());
+        existing.setFirstName(dto.getFirstName());
+        existing.setLastName(dto.getLastName());
+        existing.setMiddleName(dto.getMiddleName());
         existing.setRole(dto.getRole());
 
         return employeeMapper.toResponseDto(existing);

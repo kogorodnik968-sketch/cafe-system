@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class EmployeeResponseDto {
     private Long id;
-    private String fullName;
+    private String firstName;
+    private String lastName;
+    private String middleName;
     private EmployeeRole role;
 }
