@@ -28,6 +28,7 @@ public class OrderService {
     private final OrderItemRepository orderItemRepository;
     private final EmployeeRepository employeeRepository;
     private final Random random = new Random();
+    private static final String CUSTOMER_NOT_FOUND_MESSAGE = "Клиент не найден";
 
     private Employee getRandomEmployee () {
         List<Employee> employees = employeeRepository.findAll();
@@ -61,7 +62,7 @@ public class OrderService {
     public OrderResponseDto create(OrderRequestDto dto) {
 
         Customer customer = customerRepository.findById(dto.getCustomerId())
-                .orElseThrow(() -> new NotFoundException("Customer not found"));
+                .orElseThrow(() -> new NotFoundException(CUSTOMER_NOT_FOUND_MESSAGE));
 
         Employee randomEmployee = getRandomEmployee();
 
@@ -116,7 +117,7 @@ public class OrderService {
         order.setStatus(OrderStatus.ACCEPTED);
 
         Customer customer = customerRepository.findById(dto.getCustomerId())
-                .orElseThrow(() -> new NotFoundException("Customer not found"));
+                .orElseThrow(() -> new NotFoundException(CUSTOMER_NOT_FOUND_MESSAGE));
 
         order.setCustomer(customer);
 
@@ -163,7 +164,7 @@ public class OrderService {
         order.setOrderItems(new ArrayList<>());
 
         Customer customer = customerRepository.findById(dto.getCustomerId())
-                .orElseThrow(() -> new NotFoundException("Customer not found"));
+                .orElseThrow(() -> new NotFoundException(CUSTOMER_NOT_FOUND_MESSAGE));
 
         order.setCustomer(customer);
 
