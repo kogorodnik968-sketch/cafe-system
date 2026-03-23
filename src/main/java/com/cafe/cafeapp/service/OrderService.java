@@ -29,6 +29,7 @@ public class OrderService {
     private final EmployeeRepository employeeRepository;
     private final Random random = new Random();
     private static final String CUSTOMER_NOT_FOUND_MESSAGE = "Клиент не найден";
+    private static final String PRODUCT_NOT_FOUND_MESSAGE = "Товар не найден";
 
     private Employee getRandomEmployee () {
         List<Employee> employees = employeeRepository.findAll();
@@ -81,7 +82,7 @@ public class OrderService {
         for (OrderItemRequestDto itemDto : dto.getItems()) {
 
             Product product = productRepository.findById(itemDto.getProductId())
-                    .orElseThrow(() -> new NotFoundException("Product not found"));
+                    .orElseThrow(() -> new NotFoundException(PRODUCT_NOT_FOUND_MESSAGE));
 
             OrderItem item = new OrderItem();
             item.setOrder(savedOrder);
@@ -129,7 +130,7 @@ public class OrderService {
             OrderItemRequestDto itemDto = dto.getItems().get(i);
 
             Product product = productRepository.findById(itemDto.getProductId())
-                    .orElseThrow(() -> new NotFoundException("Product not found"));
+                    .orElseThrow(() -> new NotFoundException(PRODUCT_NOT_FOUND_MESSAGE));
 
             OrderItem item = new OrderItem();
             item.setOrder(savedOrder);
@@ -177,7 +178,7 @@ public class OrderService {
             OrderItemRequestDto itemDto = dto.getItems().get(i);
 
             Product product = productRepository.findById(itemDto.getProductId())
-                    .orElseThrow(() -> new NotFoundException("product not found"));
+                    .orElseThrow(() -> new NotFoundException(PRODUCT_NOT_FOUND_MESSAGE));
 
             OrderItem item = new OrderItem();
             item.setOrder(savedOrder);
