@@ -3,9 +3,11 @@ package com.cafe.cafeapp.service;
 import com.cafe.cafeapp.dto.CustomerRequestDto;
 import com.cafe.cafeapp.dto.CustomerResponseDto;
 import com.cafe.cafeapp.exception.AlreadyExistsException;
+import com.cafe.cafeapp.exception.BusinessException;
 import com.cafe.cafeapp.exception.NotFoundException;
 import com.cafe.cafeapp.mapper.CustomerMapper;
 import com.cafe.cafeapp.model.Customer;
+import com.cafe.cafeapp.model.Order;
 import com.cafe.cafeapp.repository.CustomerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -70,6 +72,13 @@ public class CustomerService {
             throw new NotFoundException(id);
         }
 
+        Customer customer = customerRepository.findById(id).get();
+
+        List<Order> orders = customer.getOrders();
+
+        if (!orders.isEmpty()) {
+            throw new BusinessException(id);
+        }
         customerRepository.deleteById(id);
     }
 }

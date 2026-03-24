@@ -3,8 +3,10 @@ package com.cafe.cafeapp.service;
 
 import com.cafe.cafeapp.dto.TagDto;
 import com.cafe.cafeapp.exception.AlreadyExistsException;
+import com.cafe.cafeapp.exception.BusinessException;
 import com.cafe.cafeapp.exception.NotFoundException;
 import com.cafe.cafeapp.mapper.TagMapper;
+import com.cafe.cafeapp.model.Product;
 import com.cafe.cafeapp.model.Tag;
 import com.cafe.cafeapp.repository.TagRepository;
 import lombok.RequiredArgsConstructor;
@@ -64,6 +66,13 @@ public class TagService {
     public void delete (Long id) {
         if (! tagRepository.existsById(id)) {
             throw new NotFoundException(id);
+        }
+        Tag tag = tagRepository.findById(id).get();
+
+        List<Product> products = tag.getProducts();
+
+        if ( !products.isEmpty()) {
+            throw new BusinessException(id);
         }
 
         tagRepository.deleteById(id);

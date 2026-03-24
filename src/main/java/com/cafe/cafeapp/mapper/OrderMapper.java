@@ -14,6 +14,7 @@ public interface OrderMapper {
     @Mapping(source = "orderItems", target = "items")
     OrderResponseDto toResponseDto (Order order);
 
+
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "status", ignore = true)
     @Mapping(target = "customer", ignore = true)

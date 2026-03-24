@@ -105,6 +105,46 @@ public class OrderService {
     }
 
     @Transactional
+    public OrderResponseDto update(Long id, OrderRequestDto dto) {
+
+        Order existingOrder = orderRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Заказ с id " + id + " не найден"));
+
+        Customer customer = customerRepository.findById(dto.getCustomerId())
+                .orElseThrow(() -> new NotFoundException(CUSTOMER_NOT_FOUND_MESSAGE));
+
+        existingOrder.setCustomer(customer);
+
+        orderItemRepository.deleteAll(existingOrder.getOrderItems());
+        existingOrder.getOrderItems().clear();
+
+        BigDecimal total = BigDecimal.ZERO;
+
+        for (OrderItemRequestDto itemDto : dto.getItems()) {
+            Product product = productRepository.findById(itemDto.getProductId())
+                    .orElseThrow(() -> new NotFoundException(PRODUCT_NOT_FOUND_MESSAGE));
+
+            OrderItem item = new OrderItem();
+            item.setOrder(existingOrder);
+            item.setProduct(product);
+            item.setQuantity(itemDto.getQuantity());
+            item.setPriceAtPurchase(product.getPrice());
+
+            existingOrder.getOrderItems().add(item);
+
+            total = total.add(
+                    product.getPrice().multiply(BigDecimal.valueOf(itemDto.getQuantity()))
+            );
+        }
+
+        existingOrder.setTotalPrice(total);
+
+        Order updatedOrder = orderRepository.save(existingOrder);
+
+        return orderMapper.toResponseDto(updatedOrder);
+    }
+
+    @Transactional
     public void delete(Long id) {
         if (!orderRepository.existsById(id)) {
             throw new NotFoundException(id);

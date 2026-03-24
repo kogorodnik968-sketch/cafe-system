@@ -1,6 +1,7 @@
 package com.cafe.cafeapp.service;
 
 import com.cafe.cafeapp.dto.CategoryDto;
+import com.cafe.cafeapp.exception.BusinessException;
 import com.cafe.cafeapp.exception.CategoryNotFoundException;
 import com.cafe.cafeapp.mapper.CategoryMapper;
 import com.cafe.cafeapp.model.Category;
@@ -70,7 +71,7 @@ public class CategoryService {
         List < Product > products = category.getProducts();
 
         if (!products.isEmpty()) {
-            throw new CategoryNotFoundException("Невозможно удалить категорию с существующими товарами");
+            throw new BusinessException(id);
         }
 
         categoryRepository.deleteById(id);

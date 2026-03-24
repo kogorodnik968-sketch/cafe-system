@@ -20,7 +20,6 @@ public class Customer {
     private String lastName;
     private String middleName;
     private String phoneNumber;
-    @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY,
-            cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY)
     private List<Order> orders;
 }
