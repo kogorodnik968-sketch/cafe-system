@@ -54,13 +54,5 @@ public class IngredientService {
         return ingredientMapper.toDto(existing);
     }
 
-    @Transactional
-    public void delete(Long id) {
-        if (!ingredientRepository.existsById(id)) {
-            throw new NotFoundException(id);
-        }
-
-        ingredientRepository.deleteById(id);
-    }
 }
 

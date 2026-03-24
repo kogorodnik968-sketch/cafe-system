@@ -40,10 +40,5 @@ public class IngredientController {
         return ResponseEntity.ok(ingredientService.update(id, dto));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        ingredientService.delete(id);
-        return ResponseEntity.noContent().build();
-    }
 }
 
