@@ -4,10 +4,13 @@ import com.cafe.cafeapp.dto.OrderRequestDto;
 import com.cafe.cafeapp.dto.OrderResponseDto;
 import com.cafe.cafeapp.service.OrderService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -61,4 +64,17 @@ public class OrderController {
         orderService.createWithTransaction(dto);
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/jpql")
+    public Page<OrderResponseDto> findJpql(@RequestParam Long productId,
+            @RequestParam BigDecimal minTotal, Pageable pageable) {
+        return orderService.findWithJpql(productId, minTotal, pageable);
+    }
+
+    @GetMapping("/native")
+    public Page<OrderResponseDto> findNative(@RequestParam Long productId,
+            @RequestParam BigDecimal minTotal, Pageable pageable) {
+        return orderService.findWithNative(productId, minTotal, pageable);
+    }
+
 }

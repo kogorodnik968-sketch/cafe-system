@@ -1,5 +1,6 @@
 package com.cafe.cafeapp.service;
 
+import com.cafe.cafeapp.cache.CacheKey;
 import com.cafe.cafeapp.dto.OrderItemRequestDto;
 import com.cafe.cafeapp.dto.OrderRequestDto;
 import com.cafe.cafeapp.dto.OrderResponseDto;
@@ -9,6 +10,8 @@ import com.cafe.cafeapp.mapper.OrderMapper;
 import com.cafe.cafeapp.model.*;
 import com.cafe.cafeapp.repository.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +19,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -30,6 +35,7 @@ public class OrderService {
     private final Random random = new Random();
     private static final String CUSTOMER_NOT_FOUND_MESSAGE = "Клиент не найден";
     private static final String PRODUCT_NOT_FOUND_MESSAGE = "Товар не найден";
+    private final QueryCacheService queryCacheService;
 
     private Employee getRandomEmployee () {
         List<Employee> employees = employeeRepository.findAll();
@@ -81,6 +87,7 @@ public class OrderService {
 
         for (OrderItemRequestDto itemDto : dto.getItems()) {
 
+
             Product product = productRepository.findById(itemDto.getProductId())
                     .orElseThrow(() -> new NotFoundException(PRODUCT_NOT_FOUND_MESSAGE));
 
@@ -95,6 +102,8 @@ public class OrderService {
             total = total.add(
                     product.getPrice().multiply(BigDecimal.valueOf(itemDto.getQuantity()))
             );
+
+            queryCacheService.invalidateByProductId(item.getProduct().getId());
         }
 
         savedOrder.setTotalPrice(total);
@@ -149,7 +158,16 @@ public class OrderService {
         if (!orderRepository.existsById(id)) {
             throw new NotFoundException(id);
         }
+
+        Order order = orderRepository.findById(id).get();
+        Set<Long> productIds = order.getOrderItems().stream()
+                .map(item -> item.getProduct().getId())
+                .collect(Collectors.toSet());
         orderRepository.deleteById(id);
+
+        for (Long productId : productIds) {
+            queryCacheService.invalidateByProductId(productId);
+        }
     }
 
     public void createWithoutTransaction(OrderRequestDto dto) {
@@ -242,6 +260,44 @@ public class OrderService {
 
         savedOrder.setTotalPrice(total);
         orderRepository.save(savedOrder);
+    }
+
+
+    public Page<OrderResponseDto> findWithJpql(Long productId, BigDecimal minTotal, Pageable pageable) {
+        CacheKey key = new CacheKey(productId, minTotal, pageable.getPageNumber(), pageable.getPageSize(),
+                pageable.getSort().toString()
+        );
+
+        Page<OrderResponseDto> cached = queryCacheService.get(key);
+        if (cached != null) {
+            return cached;
+        }
+
+        Page<OrderResponseDto> result = orderRepository
+                .findOrdersByProductAndMinTotal(productId, minTotal, pageable)
+                .map(orderMapper::toResponseDto);
+
+        queryCacheService.put(key, result);
+        return result;
+    }
+
+    public Page<OrderResponseDto> findWithNative(Long productId, BigDecimal minTotal, Pageable pageable) {
+        CacheKey key = new CacheKey(productId, minTotal, pageable.getPageNumber(), pageable.getPageSize(),
+                pageable.getSort().toString()
+        );
+
+        Page<OrderResponseDto> cached = queryCacheService.get(key);
+        if (cached != null) {
+            return cached;
+        }
+
+        Page<OrderResponseDto> result = orderRepository
+                .findOrdersByProductAndMinTotalNative(productId, minTotal, pageable)
+                .map(orderMapper::toResponseDto);
+
+
+        queryCacheService.put(key, result);
+        return result;
     }
 }
 

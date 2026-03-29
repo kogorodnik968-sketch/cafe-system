@@ -30,6 +30,7 @@ public class ProductService {
     private final IngredientRepository ingredientRepository;
     private final TagRepository tagRepository;
     private final ProductMapper productMapper;
+    private final QueryCacheService queryCacheService;
 
     @Transactional(readOnly = true)
     public List<ProductResponseDto> getAllProducts() {
@@ -90,6 +91,8 @@ public class ProductService {
         existing.setIngredients(ingredients);
         existing.setTag(tag);
 
+        queryCacheService.invalidateByProductId(id);
+
         return productMapper.toResponseDto(productRepository.save(existing));
     }
 
@@ -101,5 +104,6 @@ public class ProductService {
         }
 
         productRepository.deleteById(id);
+        queryCacheService.invalidateByProductId(id);
     }
 }
