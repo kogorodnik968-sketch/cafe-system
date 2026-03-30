@@ -33,22 +33,25 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             Pageable pageable
     );
 
+
     @Query(value = """
-        SELECT DISTINCT o.*
-        FROM orders o
-        JOIN order_item oi ON o.id = oi.order_id
-        JOIN product p ON oi.product_id = p.id
-        WHERE p.id = :productId
-        AND o.total_price > :minTotal
+    SELECT DISTINCT o.*
+    FROM orders o
+    JOIN customer c ON o.customer_id = c.id
+    JOIN order_item oi ON o.id = oi.order_id
+    JOIN product p ON oi.product_id = p.id
+    WHERE p.id = :productId
+    AND o.total_price >= :minTotal
         """,
-            countQuery = """
-        SELECT COUNT(DISTINCT o.id)
-        FROM orders o
-        JOIN order_item oi ON o.id = oi.order_id
-        JOIN product p ON oi.product_id = p.id
-        WHERE p.id = :productId
-        AND o.total_price >= :minTotal
-        """, nativeQuery = true)
+         countQuery = """
+    SELECT COUNT(DISTINCT o.id)
+    FROM orders o
+    JOIN order_item oi ON o.id = oi.order_id
+    JOIN product p ON oi.product_id = p.id
+    WHERE p.id = :productId
+    AND o.total_price >= :minTotal
+        """,
+            nativeQuery = true)
     Page<Order> findOrdersByProductAndMinTotalNative(
             @Param("productId") Long productId,
             @Param("minTotal") BigDecimal minTotal,
