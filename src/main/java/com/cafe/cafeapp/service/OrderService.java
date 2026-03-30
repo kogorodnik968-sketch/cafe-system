@@ -2,7 +2,6 @@ package com.cafe.cafeapp.service;
 
 import com.cafe.cafeapp.cache.CacheKey;
 import com.cafe.cafeapp.dto.OrderItemRequestDto;
-import com.cafe.cafeapp.dto.OrderItemResponseDto;
 import com.cafe.cafeapp.dto.OrderRequestDto;
 import com.cafe.cafeapp.dto.OrderResponseDto;
 import com.cafe.cafeapp.enums.OrderStatus;
