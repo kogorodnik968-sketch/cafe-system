@@ -9,7 +9,7 @@ import java.util.Objects;
 @AllArgsConstructor
 @Getter
 public class CacheKey {
-    private final Long productId;
+    private final String productName;
     private final BigDecimal minTotal;
     private final int  pageNumber;
     private final int pageSize;
@@ -29,14 +29,14 @@ public class CacheKey {
 
         return pageNumber == cacheKey.pageNumber &&
                 pageSize == cacheKey.pageSize &&
-                Objects.equals(productId, cacheKey.productId) &&
+                Objects.equals(productName, cacheKey.productName) &&
                 Objects.equals(minTotal, cacheKey.minTotal) &&
                 Objects.equals(sort, cacheKey.sort);
     }
 
     @Override
     public int hashCode () {
-        return Objects.hash(productId, minTotal, pageNumber, pageSize, sort);
+        return Objects.hash(productName, minTotal, pageNumber, pageSize, sort);
     }
 
 }

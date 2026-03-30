@@ -66,15 +66,15 @@ public class OrderController {
     }
 
     @GetMapping("/jpql")
-    public Page<OrderResponseDto> findJpql(@RequestParam Long productId,
+    public Page<OrderResponseDto> findJpql(@RequestParam String productName,
             @RequestParam BigDecimal minTotal, Pageable pageable) {
-        return orderService.findWithJpql(productId, minTotal, pageable);
+        return orderService.findWithJpql(productName, minTotal, pageable);
     }
 
     @GetMapping("/native")
-    public Page<OrderResponseDto> findNative(@RequestParam Long productId,
+    public Page<OrderResponseDto> findNative(@RequestParam String productName,
             @RequestParam BigDecimal minTotal, Pageable pageable) {
-        return orderService.findWithNative(productId, minTotal, pageable);
+        return orderService.findWithNative(productName, minTotal, pageable);
     }
 
 }

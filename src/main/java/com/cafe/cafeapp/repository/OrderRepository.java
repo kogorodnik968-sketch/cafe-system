@@ -24,11 +24,11 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
        JOIN FETCH o.customer       
        JOIN FETCH o.orderItems oi
        JOIN FETCH oi.product p
-       WHERE p.id = :productId
+       WHERE p.name = :productName
          AND o.totalPrice >= :minTotal
         """)
     Page<Order> findOrdersByProductAndMinTotal(
-            @Param("productId") Long productId,
+            @Param("productName") String productName,
             @Param("minTotal") BigDecimal minTotal,
             Pageable pageable
     );
@@ -40,7 +40,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     JOIN customer c ON o.customer_id = c.id
     JOIN order_item oi ON o.id = oi.order_id
     JOIN product p ON oi.product_id = p.id
-    WHERE p.id = :productId
+    WHERE p.name = :productName
     AND o.total_price >= :minTotal
         """,
          countQuery = """
@@ -48,12 +48,12 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     FROM orders o
     JOIN order_item oi ON o.id = oi.order_id
     JOIN product p ON oi.product_id = p.id
-    WHERE p.id = :productId
+    WHERE p.name = :productName
     AND o.total_price >= :minTotal
         """,
             nativeQuery = true)
     Page<Order> findOrdersByProductAndMinTotalNative(
-            @Param("productId") Long productId,
+            @Param("productName") String productName,
             @Param("minTotal") BigDecimal minTotal,
             Pageable pageable
     );

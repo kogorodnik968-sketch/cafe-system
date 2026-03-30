@@ -260,8 +260,8 @@ public class OrderService {
     }
 
 
-    public Page<OrderResponseDto> findWithJpql(Long productId, BigDecimal minTotal, Pageable pageable) {
-        CacheKey key = new CacheKey(productId, minTotal, pageable.getPageNumber(), pageable.getPageSize(),
+    public Page<OrderResponseDto> findWithJpql(String productName, BigDecimal minTotal, Pageable pageable) {
+        CacheKey key = new CacheKey(productName, minTotal, pageable.getPageNumber(), pageable.getPageSize(),
                 pageable.getSort().toString()
         );
 
@@ -271,15 +271,15 @@ public class OrderService {
         }
 
         Page<OrderResponseDto> result = orderRepository
-                .findOrdersByProductAndMinTotal(productId, minTotal, pageable)
+                .findOrdersByProductAndMinTotal(productName, minTotal, pageable)
                 .map(orderMapper::toResponseDto);
 
         queryCacheService.put(key, result);
         return result;
     }
 
-    public Page<OrderResponseDto> findWithNative(Long productId, BigDecimal minTotal, Pageable pageable) {
-        CacheKey key = new CacheKey(productId, minTotal, pageable.getPageNumber(), pageable.getPageSize(),
+    public Page<OrderResponseDto> findWithNative(String productName, BigDecimal minTotal, Pageable pageable) {
+        CacheKey key = new CacheKey(productName, minTotal, pageable.getPageNumber(), pageable.getPageSize(),
                 pageable.getSort().toString()
         );
 
@@ -289,7 +289,7 @@ public class OrderService {
         }
 
         Page<OrderResponseDto> result = orderRepository
-                .findOrdersByProductAndMinTotalNative(productId, minTotal, pageable)
+                .findOrdersByProductAndMinTotalNative(productName, minTotal, pageable)
                 .map(orderMapper::toResponseDto);
 
 
