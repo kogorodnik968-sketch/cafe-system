@@ -29,8 +29,8 @@ public class ProductController {
     }
 
     @GetMapping
-    @Operation(summary = "Получить товары по названию",
-            description = "Возвращает список товаров, найденных по навзанию")
+    @Operation(summary = "Получить товары",
+            description = "Возвращает список товаров")
     public List<ProductResponseDto>  getProductsByName (@RequestParam(required = false) String name) {
         if (name != null) {
             return productService.getByName(name);

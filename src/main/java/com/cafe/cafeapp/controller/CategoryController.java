@@ -29,8 +29,8 @@ public class CategoryController {
     }
 
     @GetMapping
-    @Operation(summary = "Получить категрию по названию",
-            description = "Возвращает список категорий, найденных по навзанию")
+    @Operation(summary = "Получить категрии",
+            description = "Возвращает список категорий")
     public List<CategoryDto> getCategoryByName (@RequestParam(required = false) String name) {
         if (name != null) {
             return categoryService.getByName(name);
