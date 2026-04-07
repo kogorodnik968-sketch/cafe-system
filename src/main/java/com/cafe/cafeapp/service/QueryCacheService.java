@@ -21,7 +21,7 @@ public class QueryCacheService {
         cache.put(key, value);
     }
 
-    public void invalidateByProductId(Long productId) {
+    public void invalidateByProductId(String productId) {
         cache.keySet().removeIf(key -> key.getProductName().equals(productId));
     }
 }

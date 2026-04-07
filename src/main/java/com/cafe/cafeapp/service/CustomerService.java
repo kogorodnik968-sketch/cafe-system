@@ -3,7 +3,7 @@ package com.cafe.cafeapp.service;
 import com.cafe.cafeapp.dto.CustomerRequestDto;
 import com.cafe.cafeapp.dto.CustomerResponseDto;
 import com.cafe.cafeapp.exception.AlreadyExistsException;
-import com.cafe.cafeapp.exception.BusinessException;
+import com.cafe.cafeapp.exception.DeleteNotAllowedException;
 import com.cafe.cafeapp.exception.NotFoundException;
 import com.cafe.cafeapp.mapper.CustomerMapper;
 import com.cafe.cafeapp.model.Customer;
@@ -77,7 +77,7 @@ public class CustomerService {
         List<Order> orders = customer.getOrders();
 
         if (!orders.isEmpty()) {
-            throw new BusinessException(id);
+            throw new DeleteNotAllowedException(id);
         }
         customerRepository.deleteById(id);
     }

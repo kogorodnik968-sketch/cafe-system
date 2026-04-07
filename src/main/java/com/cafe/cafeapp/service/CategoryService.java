@@ -1,8 +1,8 @@
 package com.cafe.cafeapp.service;
 
 import com.cafe.cafeapp.dto.CategoryDto;
-import com.cafe.cafeapp.exception.BusinessException;
-import com.cafe.cafeapp.exception.CategoryNotFoundException;
+import com.cafe.cafeapp.exception.DeleteNotAllowedException;
+import com.cafe.cafeapp.exception.NotFoundException;
 import com.cafe.cafeapp.mapper.CategoryMapper;
 import com.cafe.cafeapp.model.Category;
 import com.cafe.cafeapp.model.Product;
@@ -28,7 +28,7 @@ public class CategoryService {
     @Transactional(readOnly = true)
     public CategoryDto getById (Long id) {
         Category category = categoryRepository.findById(id).orElseThrow(
-                () -> new CategoryNotFoundException(id));
+                () -> new NotFoundException(id));
 
         return categoryMapper.toDto(category);
     }
@@ -43,7 +43,7 @@ public class CategoryService {
     @Transactional
     public CategoryDto create (CategoryDto dto) {
         if (categoryRepository.existsByName(dto.getName())) {
-            throw new CategoryNotFoundException("Категория с таким именем уже существует");
+            throw new NotFoundException("Категория с таким именем уже существует");
         }
 
         Category category = categoryMapper.toEntity(dto);
@@ -64,14 +64,14 @@ public class CategoryService {
     @Transactional
     public void delete (Long id) {
         if (!categoryRepository.existsById(id)) {
-            throw new CategoryNotFoundException(id);
+            throw new NotFoundException(id);
         }
 
         Category category = categoryRepository.findById(id).get();
         List < Product > products = category.getProducts();
 
         if (!products.isEmpty()) {
-            throw new BusinessException(id);
+            throw new DeleteNotAllowedException(id);
         }
 
         categoryRepository.deleteById(id);

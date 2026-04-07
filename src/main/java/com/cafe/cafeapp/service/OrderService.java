@@ -100,7 +100,7 @@ public class OrderService {
                     product.getPrice().multiply(BigDecimal.valueOf(itemDto.getQuantity()))
             );
 
-            queryCacheService.invalidateByProductId(item.getProduct().getId());
+            queryCacheService.invalidateByProductId(item.getProduct().getName());
         }
 
         savedOrder.setTotalPrice(total);
@@ -157,108 +157,15 @@ public class OrderService {
         }
 
         Order order = orderRepository.findById(id).get();
-        Set<Long> productIds = order.getOrderItems().stream()
-                .map(item -> item.getProduct().getId())
+        Set<String> productNames = order.getOrderItems().stream()
+                .map(item -> item.getProduct().getName())
                 .collect(Collectors.toSet());
         orderRepository.deleteById(id);
 
-        for (Long productId : productIds) {
-            queryCacheService.invalidateByProductId(productId);
+        for (String productName : productNames) {
+            queryCacheService.invalidateByProductId(productName);
         }
     }
-
-    public void createWithoutTransaction(OrderRequestDto dto) {
-
-        Order order = new Order();
-        order.setStatus(OrderStatus.ACCEPTED);
-
-        Customer customer = customerRepository.findById(dto.getCustomerId())
-                .orElseThrow(() -> new NotFoundException(CUSTOMER_NOT_FOUND_MESSAGE));
-
-        order.setCustomer(customer);
-
-        Order savedOrder = orderRepository.save(order);
-        BigDecimal total = BigDecimal.ZERO;
-
-        for (int i = 0; i < dto.getItems().size(); i++) {
-
-            OrderItemRequestDto itemDto = dto.getItems().get(i);
-
-            Product product = productRepository.findById(itemDto.getProductId())
-                    .orElseThrow(() -> new NotFoundException(PRODUCT_NOT_FOUND_MESSAGE));
-
-            OrderItem item = new OrderItem();
-            item.setOrder(savedOrder);
-            item.setProduct(product);
-            item.setQuantity(itemDto.getQuantity());
-            item.setPriceAtPurchase(product.getPrice());
-
-            savedOrder.getOrderItems().add(item);
-
-            BigDecimal itemTotal =
-                    product.getPrice().multiply(BigDecimal.valueOf(itemDto.getQuantity()));
-
-            total = total.add(itemTotal);
-
-            orderItemRepository.save(item);
-
-
-            if (i == 1) {
-                throw new IllegalStateException("Intentional error");
-            }
-        }
-        savedOrder.setTotalPrice(total);
-        orderRepository.save(savedOrder);
-    }
-
-    @Transactional
-    public void createWithTransaction(OrderRequestDto dto) {
-
-        Order order = new Order();
-        order.setStatus(OrderStatus.ACCEPTED);
-        order.setTotalPrice(BigDecimal.ZERO);
-        order.setOrderItems(new ArrayList<>());
-
-        Customer customer = customerRepository.findById(dto.getCustomerId())
-                .orElseThrow(() -> new NotFoundException(CUSTOMER_NOT_FOUND_MESSAGE));
-
-        order.setCustomer(customer);
-
-        Order savedOrder = orderRepository.save(order);
-
-        BigDecimal total = BigDecimal.ZERO;
-
-        for (int i = 0; i < dto.getItems().size(); i++) {
-
-            OrderItemRequestDto itemDto = dto.getItems().get(i);
-
-            Product product = productRepository.findById(itemDto.getProductId())
-                    .orElseThrow(() -> new NotFoundException(PRODUCT_NOT_FOUND_MESSAGE));
-
-            OrderItem item = new OrderItem();
-            item.setOrder(savedOrder);
-            item.setProduct(product);
-            item.setQuantity(itemDto.getQuantity());
-            item.setPriceAtPurchase(product.getPrice());
-
-            savedOrder.getOrderItems().add(item);
-
-            BigDecimal itemTotal =
-                    product.getPrice().multiply(BigDecimal.valueOf(itemDto.getQuantity()));
-
-            total = total.add(itemTotal);
-
-            orderItemRepository.save(item);
-
-            if (i == 1) {
-                throw new IllegalStateException("Intentional error");
-            }
-        }
-
-        savedOrder.setTotalPrice(total);
-        orderRepository.save(savedOrder);
-    }
-
 
     public Page<OrderResponseDto> findWithJpql(String productName, BigDecimal minTotal, Pageable pageable) {
         CacheKey key = new CacheKey(productName, minTotal, pageable.getPageNumber(), pageable.getPageSize(),

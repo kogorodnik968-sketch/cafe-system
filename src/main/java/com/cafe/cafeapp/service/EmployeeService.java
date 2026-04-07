@@ -3,7 +3,7 @@ package com.cafe.cafeapp.service;
 import com.cafe.cafeapp.dto.EmployeeRequestDto;
 import com.cafe.cafeapp.dto.EmployeeResponseDto;
 import com.cafe.cafeapp.exception.AlreadyExistsException;
-import com.cafe.cafeapp.exception.BusinessException;
+import com.cafe.cafeapp.exception.DeleteNotAllowedException;
 import com.cafe.cafeapp.exception.NotFoundException;
 import com.cafe.cafeapp.mapper.EmployeeMapper;
 import com.cafe.cafeapp.model.Employee;
@@ -73,7 +73,7 @@ public class EmployeeService {
         List<Order> orders = employee.getOrders();
 
         if (!orders.isEmpty()) {
-            throw new BusinessException(id);
+            throw new DeleteNotAllowedException(id);
         }
 
         employeeRepository.deleteById(id);

@@ -91,7 +91,8 @@ public class ProductService {
         existing.setIngredients(ingredients);
         existing.setTag(tag);
 
-        queryCacheService.invalidateByProductId(id);
+
+        queryCacheService.invalidateByProductId(existing.getName());
 
         return productMapper.toResponseDto(productRepository.save(existing));
     }
@@ -103,7 +104,10 @@ public class ProductService {
             throw new NotFoundException("Продукт не найден с id" + id);
         }
 
+        Product product = productRepository.findById(id).orElseThrow();
+
         productRepository.deleteById(id);
-        queryCacheService.invalidateByProductId(id);
+
+        queryCacheService.invalidateByProductId(product.getName());
     }
 }

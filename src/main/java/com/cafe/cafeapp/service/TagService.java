@@ -3,7 +3,7 @@ package com.cafe.cafeapp.service;
 
 import com.cafe.cafeapp.dto.TagDto;
 import com.cafe.cafeapp.exception.AlreadyExistsException;
-import com.cafe.cafeapp.exception.BusinessException;
+import com.cafe.cafeapp.exception.DeleteNotAllowedException;
 import com.cafe.cafeapp.exception.NotFoundException;
 import com.cafe.cafeapp.mapper.TagMapper;
 import com.cafe.cafeapp.model.Product;
@@ -72,7 +72,7 @@ public class TagService {
         List<Product> products = tag.getProducts();
 
         if ( !products.isEmpty()) {
-            throw new BusinessException(id);
+            throw new DeleteNotAllowedException(id);
         }
 
         tagRepository.deleteById(id);
