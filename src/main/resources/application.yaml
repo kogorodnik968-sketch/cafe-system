@@ -5,7 +5,7 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/CafeDB
     username: postgres
-    password: R5q8l9p0
+    password: ${DB_PASSWORD}
 
   jpa:
     hibernate:
@@ -16,6 +16,7 @@ spring:
         format_sql: true
         hibernate.use_sql_comments: true
 
-  logging.level:
-    org.hibernate.SQL: DEBUG
-    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+  logging:
+    level:
+      root: INFO
+      com.cafe.cafeapp: DEBUG
