@@ -18,7 +18,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleValidation (
             MethodArgumentNotValidException exc, HttpServletRequest request) {
 
-        log.error("Ошибка валидации: ", exc);
+        log.error("Ошибка валидации");
         String message = exc.getBindingResult().getFieldErrors().stream().
                 map(error -> error.getField() + ": " + error.getDefaultMessage()).
                 findFirst().orElse("Validation error");
@@ -33,7 +33,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleInvalidFormat(
             HttpMessageNotReadableException ex,
             HttpServletRequest request) {
-        log.error("Неверный формат данных: ", ex);
+        log.error("Неверный формат данных");
         ErrorResponse error = new ErrorResponse(
                 LocalDateTime.now(),
                 400,
@@ -48,7 +48,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<ErrorResponse> handleNotFound (
             NotFoundException exc, HttpServletRequest request) {
-        log.error("Не найдено: ", exc);
+        log.error("Не найдено");
         ErrorResponse error = new ErrorResponse( LocalDateTime.now(), 404, "Not Found",
                 exc.getMessage(), request.getRequestURI());
         return ResponseEntity.status(404).body(error);
@@ -57,7 +57,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AlreadyExistsException.class)
     public ResponseEntity<ErrorResponse> handleAlreadyExists (
             AlreadyExistsException exc, HttpServletRequest request) {
-        log.error("Таакой объект уже создан: ", exc);
+        log.error("Таакой объект уже создан");
         ErrorResponse error = new ErrorResponse(LocalDateTime.now(), 409, "Conflict",
                 exc.getMessage(), request.getRequestURI());
 
@@ -67,7 +67,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(DeleteNotAllowedException.class)
     public ResponseEntity<ErrorResponse> handleDeleteNotAllowed (
             DeleteNotAllowedException exc, HttpServletRequest request) {
-        log.error("Невозможно удалить: ", exc);
+        log.error("Невозможно удалить");
         return ResponseEntity.status(409).body(
                 new ErrorResponse(LocalDateTime.now(), 409, "Conflict",
                         exc.getMessage(), request.getRequestURI()));

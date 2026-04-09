@@ -67,4 +67,25 @@ public class ProductController {
 
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping ("/bulk")
+    @Operation(summary = "Создать список товаров",
+            description = "Принимает список товаров и сохраняет в базу данных")
+    public List<ProductResponseDto> createBulk(@RequestBody List<ProductRequestDto> dtos) {
+        return productService.createBulk(dtos);
+    }
+
+    @PostMapping("/bulk/without-transaction")
+    @Operation(summary = "Массовое создание продуктов БЕЗ транзакции")
+    public ResponseEntity<List<ProductResponseDto>> createBulkDemoWithoutTransaction(
+            @RequestBody List<ProductRequestDto> dtos) {
+        return ResponseEntity.ok(productService.createBulkWithoutTransaction(dtos));
+    }
+
+    @PostMapping("/bulk/with-transaction")
+    @Operation(summary = "Массовое создание продуктов С транзакцией")
+    public ResponseEntity<List<ProductResponseDto>> createBulkDemoWithTransaction(
+            @RequestBody List<ProductRequestDto> dtos) {
+        return ResponseEntity.ok(productService.createBulkWithTransaction(dtos));
+    }
 }

@@ -13,13 +13,16 @@ import com.cafe.cafeapp.repository.CategoryRepository;
 import com.cafe.cafeapp.repository.IngredientRepository;
 import com.cafe.cafeapp.repository.ProductRepository;
 import com.cafe.cafeapp.repository.TagRepository;
+import com.cafe.cafeapp.exception.TransactionalException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -110,4 +113,64 @@ public class ProductService {
 
         queryCacheService.invalidateByProductId(product.getName());
     }
+
+    @Transactional
+    public List<ProductResponseDto> createBulk(List<ProductRequestDto> dtos) {
+
+        Set<String> uniqueNames = dtos.stream()
+                .map(ProductRequestDto::getName)
+                .collect(Collectors.toSet());
+
+        if (uniqueNames.size() != dtos.size()) {
+            throw new AlreadyExistsException("В одном запросе не может быть продуктов с одинаковыми названиями");
+        }
+
+        return dtos.stream()
+                .map(this::create)
+                .toList();
+    }
+
+
+    public List<ProductResponseDto> createBulkWithoutTransaction(List<ProductRequestDto> dtos) {
+
+        List<ProductResponseDto> result = new ArrayList<>();
+
+        for (ProductRequestDto dto : dtos) {
+
+            if ("ERROR".equals(dto.getName())) {
+                throw new RuntimeException("Ошибка для демонстрации");
+            }
+
+            ProductResponseDto response = create(dto);
+            result.add(response);
+        }
+
+        return result;
+    }
+
+
+    @Transactional
+    public List<ProductResponseDto> createBulkWithTransaction(List<ProductRequestDto> dtos) {
+
+        List<ProductResponseDto> result = new ArrayList<>();
+        for (ProductRequestDto dto: dtos) {
+            if ("ERROR".equals(dto.getName())) {
+                throw new TransactionalException("" +
+                        "Обнаружен продукт с названием ERROR — транзакция откатится");
+            }
+
+            Product product = productMapper.toEntity(dto);
+            Category category = categoryRepository.findById(dto.getCategoryId()).orElseThrow();
+            Tag tag = tagRepository.findById(dto.getTagId()).orElseThrow();
+            Set<Ingredient> ingredients = new HashSet<>(ingredientRepository.findAllById(dto.getIngredientsId()));
+
+            product.setCategory(category);
+            product.setTag(tag);
+            product.setIngredients(ingredients);
+
+            productRepository.saveAndFlush(product);
+        }
+        return result;
+    }
+
 }
