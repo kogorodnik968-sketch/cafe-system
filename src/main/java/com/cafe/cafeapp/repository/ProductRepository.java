@@ -17,5 +17,8 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findByName(String productName);
 
     boolean existsByName(String name);
+
+    @EntityGraph(attributePaths = {"category", "tag", "ingredients"}, type = EntityGraph.EntityGraphType.FETCH)
+    List<Product> findAllByOrderByIdDesc();
 }
 

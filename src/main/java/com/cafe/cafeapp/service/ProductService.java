@@ -37,7 +37,7 @@ public class ProductService {
 
     @Transactional(readOnly = true)
     public List<ProductResponseDto> getAllProducts() {
-        return productMapper.toResponseDto(productRepository.findAll());
+        return productMapper.toResponseDto(productRepository.findAllByOrderByIdDesc());
     }
 
     @Transactional(readOnly = true)
