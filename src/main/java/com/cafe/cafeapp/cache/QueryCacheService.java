@@ -1,6 +1,5 @@
-package com.cafe.cafeapp.service;
+package com.cafe.cafeapp.cache;
 
-import com.cafe.cafeapp.cache.CacheKey;
 import com.cafe.cafeapp.dto.OrderResponseDto;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;

@@ -1,6 +1,7 @@
 package com.cafe.cafeapp.service;
 
 import com.cafe.cafeapp.dto.CategoryDto;
+import com.cafe.cafeapp.exception.AlreadyExistsException;
 import com.cafe.cafeapp.exception.DeleteNotAllowedException;
 import com.cafe.cafeapp.exception.NotFoundException;
 import com.cafe.cafeapp.mapper.CategoryMapper;
@@ -43,7 +44,7 @@ public class CategoryService {
     @Transactional
     public CategoryDto create (CategoryDto dto) {
         if (categoryRepository.existsByName(dto.getName())) {
-            throw new NotFoundException("Категория с таким именем уже существует");
+            throw new AlreadyExistsException("Категория с таким именем уже существует");
         }
 
         Category category = categoryMapper.toEntity(dto);

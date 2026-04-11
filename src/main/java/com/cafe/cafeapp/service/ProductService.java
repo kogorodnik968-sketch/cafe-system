@@ -1,5 +1,6 @@
 package com.cafe.cafeapp.service;
 
+import com.cafe.cafeapp.cache.QueryCacheService;
 import com.cafe.cafeapp.dto.ProductResponseDto;
 import com.cafe.cafeapp.dto.ProductRequestDto;
 import com.cafe.cafeapp.exception.AlreadyExistsException;
@@ -13,7 +14,6 @@ import com.cafe.cafeapp.repository.CategoryRepository;
 import com.cafe.cafeapp.repository.IngredientRepository;
 import com.cafe.cafeapp.repository.ProductRepository;
 import com.cafe.cafeapp.repository.TagRepository;
-import com.cafe.cafeapp.exception.TransactionalException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -132,7 +132,6 @@ public class ProductService {
 
 
     public List<ProductResponseDto> createBulkWithoutTransaction(List<ProductRequestDto> dtos) {
-
         List<ProductResponseDto> result = new ArrayList<>();
 
         for (ProductRequestDto dto : dtos) {
@@ -151,25 +150,18 @@ public class ProductService {
 
     @Transactional
     public List<ProductResponseDto> createBulkWithTransaction(List<ProductRequestDto> dtos) {
-
         List<ProductResponseDto> result = new ArrayList<>();
-        for (ProductRequestDto dto: dtos) {
+
+        for (ProductRequestDto dto : dtos) {
+
             if ("ERROR".equals(dto.getName())) {
-                throw new TransactionalException("" +
-                        "Обнаружен продукт с названием ERROR — транзакция откатится");
+                throw new RuntimeException("Ошибка для демонстрации");
             }
 
-            Product product = productMapper.toEntity(dto);
-            Category category = categoryRepository.findById(dto.getCategoryId()).orElseThrow();
-            Tag tag = tagRepository.findById(dto.getTagId()).orElseThrow();
-            Set<Ingredient> ingredients = new HashSet<>(ingredientRepository.findAllById(dto.getIngredientsId()));
-
-            product.setCategory(category);
-            product.setTag(tag);
-            product.setIngredients(ingredients);
-
-            productRepository.saveAndFlush(product);
+            ProductResponseDto response = create(dto);
+            result.add(response);
         }
+
         return result;
     }
 

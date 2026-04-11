@@ -1,6 +1,7 @@
 package com.cafe.cafeapp.service;
 
 import com.cafe.cafeapp.cache.CacheKey;
+import com.cafe.cafeapp.cache.QueryCacheService;
 import com.cafe.cafeapp.dto.OrderItemRequestDto;
 import com.cafe.cafeapp.dto.OrderRequestDto;
 import com.cafe.cafeapp.dto.OrderResponseDto;
@@ -198,7 +199,6 @@ public class OrderService {
         Page<OrderResponseDto> result = orderRepository
                 .findOrdersByProductAndMinTotalNative(productName, minTotal, pageable)
                 .map(orderMapper::toResponseDto);
-
 
         queryCacheService.put(key, result);
         return result;

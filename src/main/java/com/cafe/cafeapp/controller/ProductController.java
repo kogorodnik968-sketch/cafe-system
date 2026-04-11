@@ -77,9 +77,10 @@ public class ProductController {
 
     @PostMapping("/bulk/without-transaction")
     @Operation(summary = "Массовое создание продуктов БЕЗ транзакции")
-    public ResponseEntity<List<ProductResponseDto>> createBulkDemoWithoutTransaction(
-            @RequestBody List<ProductRequestDto> dtos) {
-        return ResponseEntity.ok(productService.createBulkWithoutTransaction(dtos));
+    public ResponseEntity<List<ProductResponseDto>> createBulkWithoutTransaction(
+            @RequestBody List<ProductRequestDto> products) {
+        List<ProductResponseDto> results = productService.createBulkWithoutTransaction(products);
+        return ResponseEntity.status(HttpStatus.CREATED).body(results);
     }
 
     @PostMapping("/bulk/with-transaction")
