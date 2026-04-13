@@ -61,7 +61,7 @@ public class ProductServiceTest {
         List<ProductResponseDto> dtos = List.of(new ProductResponseDto());
 
         when(productRepository.findAll()).thenReturn(products);
-        when(productMapper.toResponseDto(products)).thenReturn(dtos);
+        when(productMapper.toResponseDto(any(Product.class))).thenReturn(dtos.get(0));
 
         assertEquals(dtos, productService.getAllProducts());
     }

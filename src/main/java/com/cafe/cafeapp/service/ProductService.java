@@ -59,7 +59,7 @@ public class ProductService {
     public ProductResponseDto create (ProductRequestDto dto) {
 
         if (productRepository.existsByName(dto.getName())) {
-            throw new AlreadyExistsException("Товарн с таким названием уже существует");
+            throw new AlreadyExistsException("Товар с таким названием уже существует");
         }
 
         Product product = productMapper.toEntity(dto);

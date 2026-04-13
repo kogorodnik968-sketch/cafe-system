@@ -55,7 +55,7 @@ public class TagService {
 
     @Transactional
     public TagDto update (Long id, TagDto dto) {
-        Tag existing = tagRepository.findById(id).orElseThrow();
+        Tag existing = tagRepository.findById(id).orElseThrow(() -> new NotFoundException("Tag not found"));
 
         existing.setName(dto.getName());
 
