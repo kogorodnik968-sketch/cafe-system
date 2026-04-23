@@ -18,6 +18,9 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
         "orderItems.product"}, type = EntityGraph.EntityGraphType.FETCH)
     List<Order> findAll();
 
+    @EntityGraph(attributePaths = {"customer", "orderItems", "orderItems.product"}, type = EntityGraph.EntityGraphType.FETCH)
+    List<Order> findAllByOrderByIdDesc();
+
     @Query("""
        SELECT DISTINCT o
        FROM Order o

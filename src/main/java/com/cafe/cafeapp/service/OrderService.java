@@ -57,7 +57,7 @@ public class OrderService {
 
     @Transactional(readOnly = true)
     public List<OrderResponseDto> getAll() {
-        return orderRepository.findAll()
+        return orderRepository.findAllByOrderByIdDesc()  // ← поменяли метод
                 .stream()
                 .map(orderMapper::toResponseDto)
                 .toList();
