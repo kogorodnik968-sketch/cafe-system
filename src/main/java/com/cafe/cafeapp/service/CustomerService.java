@@ -46,6 +46,8 @@ public class CustomerService {
             throw new AlreadyExistsException("Customer with this name already exists");
         }
         Customer customer = customerMapper.toEntity(dto);
+        customer.setEmail(dto.getEmail());
+        customer.setPassword(dto.getPassword());
 
         Customer saved = customerRepository.save(customer);
 
@@ -62,6 +64,9 @@ public class CustomerService {
         existing.setLastName(dto.getLastName());
         existing.setMiddleName(dto.getMiddleName());
         existing.setPhoneNumber(dto.getPhoneNumber());
+        existing.setImageUrl(dto.getImageUrl());
+        existing.setEmail(dto.getEmail());
+        existing.setPassword(dto.getPassword());
 
         return customerMapper.toResponseDto(existing);
     }

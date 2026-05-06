@@ -26,4 +26,5 @@ public class ProductRequestDto {
     private Set<Long> ingredientsId;
     @Schema(description = "Id тега", example = "2")
     private Long tagId;
+    private String imageUrl;
 }

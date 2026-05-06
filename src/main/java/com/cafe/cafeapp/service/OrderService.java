@@ -203,5 +203,12 @@ public class OrderService {
         queryCacheService.put(key, result);
         return result;
     }
+
+    public List<OrderResponseDto> getByCustomerId(Long customerId) {
+        return orderRepository.findByCustomerId(customerId)
+                .stream()
+                .map(orderMapper::toResponseDto)
+                .collect(Collectors.toList());
+    }
 }
 

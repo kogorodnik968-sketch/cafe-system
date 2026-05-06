@@ -89,4 +89,14 @@ public class ProductController {
             @RequestBody List<ProductRequestDto> dtos) {
         return ResponseEntity.ok(productService.createBulkWithTransaction(dtos));
     }
+
+    @GetMapping("/by-category/{categoryId}")
+    public List<ProductResponseDto> getByCategory(@PathVariable Long categoryId) {
+        return productService.getByCategoryId(categoryId);
+    }
+
+    @GetMapping("/by-tag/{tagId}")
+    public List<ProductResponseDto> getByTag(@PathVariable Long tagId) {
+        return productService.getByTagId(tagId);
+    }
 }

@@ -25,4 +25,7 @@ public class EmployeeRequestDto {
 
     @Schema(description = "Роль работника", example = "BARISTA")
     private EmployeeRole role;
+    private String imageUrl;
+    private String email;
+    private String password;
 }

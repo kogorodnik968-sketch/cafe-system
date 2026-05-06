@@ -32,6 +32,7 @@ public class Product {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tag_id", nullable = false)
     private Tag tag;
+    private String imageUrl;
 }
 
 

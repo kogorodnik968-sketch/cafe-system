@@ -20,5 +20,9 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     @EntityGraph(attributePaths = {"category", "tag", "ingredients"}, type = EntityGraph.EntityGraphType.FETCH)
     List<Product> findAllByOrderByIdDesc();
+
+    List<Product> findByCategoryId(Long categoryId);
+
+    List<Product> findByTagId(Long tagId);
 }
 

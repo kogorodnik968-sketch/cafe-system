@@ -73,6 +73,7 @@ public class ProductService {
         product.setCategory(category);
         product.setIngredients(ingredients);
         product.setTag(tag);
+        product.setImageUrl(dto.getImageUrl());
 
         Product saved = productRepository.save(product);
         return productMapper.toResponseDto(saved);
@@ -93,6 +94,7 @@ public class ProductService {
         existing.setCategory(category);
         existing.setIngredients(ingredients);
         existing.setTag(tag);
+        existing.setImageUrl(dto.getImageUrl());
 
 
         queryCacheService.invalidateByProductId(existing.getName());
@@ -164,6 +166,20 @@ public class ProductService {
         }
 
         return result;
+    }
+
+    public List<ProductResponseDto> getByCategoryId(Long categoryId) {
+        return productRepository.findByCategoryId(categoryId)
+                .stream()
+                .map(productMapper::toResponseDto)
+                .collect(Collectors.toList());
+    }
+
+    public List<ProductResponseDto> getByTagId(Long tagId) {
+        return productRepository.findByTagId(tagId)
+                .stream()
+                .map(productMapper::toResponseDto)
+                .collect(Collectors.toList());
     }
 
 }

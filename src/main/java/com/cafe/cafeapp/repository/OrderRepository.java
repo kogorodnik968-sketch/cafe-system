@@ -18,7 +18,8 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
         "orderItems.product"}, type = EntityGraph.EntityGraphType.FETCH)
     List<Order> findAll();
 
-    @EntityGraph(attributePaths = {"customer", "orderItems", "orderItems.product"}, type = EntityGraph.EntityGraphType.FETCH)
+    @EntityGraph(attributePaths = {"customer", "orderItems", "orderItems.product"},
+            type = EntityGraph.EntityGraphType.FETCH)
     List<Order> findAllByOrderByIdDesc();
 
     @Query("""
@@ -60,4 +61,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             @Param("minTotal") BigDecimal minTotal,
             Pageable pageable
     );
+
+    List<Order> findByCustomerId(Long customerId);
 }

@@ -22,4 +22,9 @@ public class Customer {
     private String phoneNumber;
     @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY)
     private List<Order> orders;
+    private String imageUrl;
+
+    @Column(unique = true)
+    private String email;
+    private String password;
 }

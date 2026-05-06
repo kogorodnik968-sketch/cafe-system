@@ -30,7 +30,7 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Enumerated(EnumType.STRING)
-    private OrderStatus status;   //изменить на перечисление
+    private OrderStatus status;
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<OrderItem> orderItems;
     @ManyToOne(fetch = FetchType.LAZY)

@@ -19,4 +19,7 @@ public class CustomerResponseDto {
     private String middleName;
     @Schema(description = "Телефон пользователя", example = "+375298057123")
     private String phoneNumber;
+    private String imageUrl;
+    private String password;
+    private String email;
 }

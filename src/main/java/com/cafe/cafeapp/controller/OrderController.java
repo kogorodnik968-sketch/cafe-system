@@ -80,4 +80,9 @@ public class OrderController {
             @RequestParam BigDecimal minTotal, Pageable pageable) {
         return orderService.findWithNative(productName, minTotal, pageable);
     }
+
+    @GetMapping("/by-customer/{customerId}")
+    public List<OrderResponseDto> getByCustomer(@PathVariable Long customerId) {
+        return orderService.getByCustomerId(customerId);
+    }
 }

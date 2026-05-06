@@ -31,4 +31,6 @@ public interface ProductMapper {
         return ingredient != null ? ingredient.getName() : null;
     }
 
+
+
 }

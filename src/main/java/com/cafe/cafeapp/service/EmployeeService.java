@@ -43,6 +43,9 @@ public class EmployeeService {
             throw new AlreadyExistsException("Employee with this name already exists");
         }
         Employee employee = employeeMapper.toEntity(dto);
+        employee.setEmail(dto.getEmail());
+        employee.setPassword(dto.getPassword());
+        employee.setRole(dto.getRole());
 
         Employee saved = employeeRepository.save(employee);
 
@@ -59,6 +62,9 @@ public class EmployeeService {
         existing.setLastName(dto.getLastName());
         existing.setMiddleName(dto.getMiddleName());
         existing.setRole(dto.getRole());
+        existing.setImageUrl(dto.getImageUrl());
+        existing.setEmail(dto.getEmail());
+        existing.setPassword(dto.getPassword());
 
         return employeeMapper.toResponseDto(existing);
     }

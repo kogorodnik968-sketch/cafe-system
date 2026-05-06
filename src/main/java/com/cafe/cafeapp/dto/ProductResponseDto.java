@@ -24,4 +24,5 @@ public class ProductResponseDto {
     private List<String> ingredientsName;
     @Schema(description = "Название тега", example = "Стандарт")
     private String tagName;
+    private String imageUrl;
 }

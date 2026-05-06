@@ -73,7 +73,7 @@ public class GlobalExceptionHandler {
                         exc.getMessage(), request.getRequestURI()));
     }
 
-    @ExceptionHandler(Exception.class)
+   @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGeneric ( Exception exc, HttpServletRequest request) {
 
         log.error("Произошла ошибка: ", exc);
