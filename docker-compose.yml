@@ -1,0 +1,51 @@
+services:
+
+  postgres:
+    image: postgres:16
+    container_name: cafe-postgres
+
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - ./backup.sql:/docker-entrypoint-initdb.d/init.sql
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: ./backend
+
+    container_name: cafe-backend
+
+    depends_on:
+      - postgres
+
+    environment:
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+
+    ports:
+      - "8080:8080"
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        REACT_APP_API_URL: http://localhost:8080
+
+    container_name: cafe-frontend
+
+    depends_on:
+      - backend
+
+    ports:
+      - "3000:80"
+
+volumes:
+  postgres_data:
