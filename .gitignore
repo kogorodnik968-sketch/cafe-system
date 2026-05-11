@@ -1,5 +1,16 @@
+# IDE
+.idea/
+
+# Java
+backend/target/
+backend/logs/
+
+# Node
+frontend/node_modules/
+frontend/build/
+
+# Environment
 .env
-node_modules
-target
-build
-.idea
+
+# Docker
+docker-compose.override.yml
