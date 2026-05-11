@@ -271,7 +271,7 @@ export default function ProductManage() {
                  if (!file) return;
                  const formData = new FormData();
                  formData.append('file', file);
-                 const res = await fetch('${process.env.REACT_APP_API_URL}/api/images/upload', {
+                 const res = await fetch(`${process.env.REACT_APP_API_URL}/api/images/upload`, {
                    method: 'POST',
                    body: formData,
                  });
