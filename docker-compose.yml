@@ -26,26 +26,12 @@ services:
       - postgres
 
     environment:
-      DB_NAME: ${DB_NAME}
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${DB_NAME}
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
 
     ports:
       - "8080:8080"
-
-  frontend:
-    build:
-      context: ./frontend
-      args:
-        REACT_APP_API_URL: http://localhost:8080
-
-    container_name: cafe-frontend
-
-    depends_on:
-      - backend
-
-    ports:
-      - "3000:80"
 
 volumes:
   postgres_data:
